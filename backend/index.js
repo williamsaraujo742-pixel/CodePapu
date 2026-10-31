@@ -13,7 +13,7 @@ app.use(cors());
 
 
 
-const path = require('path'); // Si ya lo tienes arriba, no lo repitas
+
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 app.get('/', (req, res) => {
