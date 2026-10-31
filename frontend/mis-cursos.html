@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodePapu | Mis Capacitaciones</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="dashboard-body">
+
+    <aside class="sidebar">
+        <div class="logo">Code<span>Papu</span></div>
+        <div class="admin-info">
+            <p>COLABORADOR</p>
+            <h3 id="nombre-empleado">Cargando...</h3>
+        </div>
+        <nav class="side-menu">
+            <a href="#" class="active">📚 Mis Capacitaciones</a>
+            <a href="#" id="btn-logout">🚪 Cerrar Sesión</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h1>Mis Capacitaciones</h1>
+            <p>Selecciona un curso para continuar con tu formación.</p>
+        </header>
+
+        <div class="grid-cursos" id="contenedor-cursos-empleado">
+            <!-- Aquí JavaScript inyectará las tarjetas de los cursos asignados -->
+            <p style="text-align:center; width:100%;">Cargando tus cursos...</p>
+        </div>
+    </main>
+
+    <script>
+        const usuario = JSON.parse(localStorage.getItem('usuarioCodePapu'));
+        
+        if (!usuario || usuario.rol !== 'empleado') {
+            window.location.href = '/index.html';
+        } else {
+            document.getElementById('nombre-empleado').textContent = usuario.nombre;
+            cargarMisCursos(usuario.id);
+        }
+
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('usuarioCodePapu');
+            window.location.href = '/index.html';
+        });
+
+        async function cargarMisCursos(usuario_id) {
+            try {
+                // Esta ruta la crearemos en el backend
+                const response = await fetch(`/api/empleado/mis-cursos/${usuario_id}`);
+                const data = await response.json();
+                
+                const contenedor = document.getElementById('contenedor-cursos-empleado');
+                contenedor.innerHTML = '';
+
+                if (data.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align:center; width:100%;">No tienes cursos asignados aún.</p>';
+                    return;
+                }
+
+                data.forEach(curso => {
+                    // Color del badge según el estado
+                    let badgeClass = 'pendiente';
+                    if (curso.estado === 'Apto') badgeClass = 'apto';
+                    if (curso.estado === 'En Curso') badgeClass = 'curso';
+
+                    const card = document.createElement('div');
+                    card.className = 'curso-card';
+                    card.style.cursor = 'pointer';
+                    card.innerHTML = `
+                        <div class="curso-info" style="padding: 25px;">
+                            <h3>${curso.titulo}</h3>
+                            <p>${curso.descripcion}</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                                <span class="badge ${badgeClass}">${curso.estado}</span>
+                                <button class="btn-primary" style="padding: 8px 15px; font-size: 0.8rem;" onclick="irAlCurso(${curso.id})">Ir al Curso</button>
+                            </div>
+                        </div>
+                    `;
+                    contenedor.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error al cargar cursos:', error);
+            }
+        }
+
+        function irAlCurso(curso_id) {
+            // Guardamos el ID del curso para que capacitacion.html sepa cuál cargar
+            localStorage.setItem('cursoActual', curso_id);
+            window.location.href = 'capacitacion.html';
+        }
+    </script>
+</body>
+</html>

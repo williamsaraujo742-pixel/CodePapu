@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodePapu | Mi Capacitación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="dashboard-body">
+
+    <aside class="sidebar">
+        <div class="logo">Code<span>Papu</span></div>
+        <div class="admin-info">
+            <p>COLABORADOR</p>
+            <h3 id="nombre-empleado">Cargando...</h3>
+        </div>
+        <nav class="side-menu">
+            <a href="#" class="active">📚 Mi Capacitación</a>
+            <a href="#" id="btn-logout">🚪 Cerrar Sesión</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+      <header>
+    <a href="mis-cursos.html" style="color: #38bdf8; text-decoration: none; font-size: 0.9rem; display: inline-block; margin-bottom: 10px;">← Volver a mis cursos</a>
+    <h1>Mi Capacitación</h1>
+    <p>Completa los requisitos para estar Apto para Operar.</p>
+</header>
+
+        <!-- Estado del empleado -->
+        <div class="status-card">
+            <h3>Estado de Habilitación</h3>
+            <div id="estado-badge" class="badge pendiente">Pendiente</div>
+        </div>
+
+        <!-- Contenido del curso -->
+        <div class="course-container">
+    <div class="video-container">
+    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video de capacitación" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+     </div>
+
+            <div class="test-section">
+                <h3>Cuestionario de Evaluación</h3>
+
+               <form id="form-evaluacion">
+    <div class="pregunta-group">
+        <label>1. ¿Conoces los procedimientos de emergencia?</label>
+        <select id="pregunta1" required>
+            <option value="">Selecciona una opción...</option>
+            <option value="si">Sí, los conozco</option>
+            <option value="no">No, no los conozco</option>
+        </select>
+    </div>
+    <div class="pregunta-group">
+        <label>2. ¿Cuál es la ruta de evacuación principal?</label>
+        <select id="pregunta2" required>
+            <option value="">Selecciona una opción...</option>
+            <option value="si">La ruta señalizada</option>
+            <option value="no">No lo sé</option>
+        </select>
+    </div>
+    <div class="pregunta-group">
+        <label>3. ¿Sabes cómo usar un extintor?</label>
+        <select id="pregunta3" required>
+            <option value="">Selecciona una opción...</option>
+            <option value="si">Sí, sé usarlo</option>
+            <option value="no">No, no sé</option>
+        </select>
+    </div>
+    <div class="pregunta-group">
+        <label>4. ¿Conoces el punto de reunión en caso de sismo?</label>
+        <select id="pregunta4" required>
+            <option value="">Selecciona una opción...</option>
+            <option value="si">Sí, lo conozco</option>
+            <option value="no">No, no lo conozco</option>
+        </select>
+    </div>
+
+    <h3 style="margin-top: 20px;">Firma Digital de Conformidad</h3>
+    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">Firma en el recuadro blanco:</p>
+    <canvas id="canvasFirma" width="400" height="150" style="background:white; border-radius:10px; cursor:crosshair; border: 2px solid #334155;"></canvas>
+    <br>
+    <button type="button" id="btn-limpiar" style="background:none; border:1px solid #ef4444; color:#ef4444; padding:5px 10px; border-radius:5px; margin-top:10px; cursor:pointer;">Limpiar Firma</button>
+    
+    <br><br>
+    <button type="submit" class="btn-primary" style="width:auto; padding: 12px 30px;">Enviar y Firmar</button>
+</form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const usuario = JSON.parse(localStorage.getItem('usuarioCodePapu'));
+        
+        if (!usuario || usuario.rol !== 'empleado') {
+            window.location.href = '/index.html';
+        } else {
+            document.getElementById('nombre-empleado').textContent = usuario.nombre;
+            cargarEstado(usuario.id);
+        }
+
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('usuarioCodePapu');
+            window.location.href = '/index.html';
+        });
+
+        // Cargar el estado actual del empleado
+        async function cargarEstado(usuario_id) {
+            try {
+                const response = await fetch(`/api/empleado/estado/${usuario_id}`);
+                const data = await response.json();
+                
+                const badge = document.getElementById('estado-badge');
+                if (data.estado === 'Apto') {
+                    badge.textContent = 'APTO PARA OPERAR HOY';
+                    badge.className = 'badge apto';
+                } else if (data.estado === 'En Curso') {
+                    badge.textContent = 'EN CURSO';
+                    badge.className = 'badge curso';
+                } else {
+                    badge.textContent = 'PENDIENTE';
+                    badge.className = 'badge pendiente';
+                }
+            } catch (error) {
+                console.error('Error al cargar estado:', error);
+            }
+        }
+
+        // --- Lógica del Canvas (Firma) ---
+        const canvas = document.getElementById('canvasFirma');
+        const ctx = canvas.getContext('2d');
+        let dibujando = false;
+
+        canvas.addEventListener('mousedown', (e) => {
+            dibujando = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+        canvas.addEventListener('mousemove', (e) => {
+            if (dibujando) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+        canvas.addEventListener('mouseup', () => dibujando = false);
+        canvas.addEventListener('mouseout', () => dibujando = false);
+
+        document.getElementById('btn-limpiar').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // --- Enviar la evaluación ---
+       document.getElementById('form-evaluacion').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Validar que todas las preguntas estén respondidas
+    const p1 = document.getElementById('pregunta1').value;
+    const p2 = document.getElementById('pregunta2').value;
+    const p3 = document.getElementById('pregunta3').value;
+    const p4 = document.getElementById('pregunta4').value;
+
+    if (!p1 || !p2 || !p3 || !p4) {
+        alert('Por favor, responde todas las preguntas antes de firmar.');
+        return;
+    }
+
+    const firmaBase64 = canvas.toDataURL(); 
+    const nota = 18; // Simulamos nota aprobatoria
+
+    try {
+        const response = await fetch('/api/empleado/completar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: usuario.id,
+                curso_id: 1, 
+                nota: nota,
+                firma_base64: firmaBase64
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert('¡Firma enviada con éxito! Ahora estás APTO.');
+            
+            // 1. Limpiar el formulario
+            document.getElementById('form-evaluacion').reset();
+            // 2. Limpiar el canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 3. Actualizar el estado visualmente a "APTO"
+            cargarEstado(usuario.id);
+        }
+    } catch (error) {
+        console.error('Error al enviar:', error);
+    }
+});
+        
+    </script>
+</body>
+</html>

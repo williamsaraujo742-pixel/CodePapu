@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodePapu | Matriz de Cumplimiento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Barra lateral -->
+    <aside class="sidebar">
+        <div class="logo">Code<span>Papu</span></div>
+        <div class="admin-info">
+            <p>ADMIN</p>
+            <h3 id="admin-nombre">Cargando...</h3>
+        </div>
+        <nav class="side-menu">
+            <a href="#" class="active">📊 Matriz de Cumplimiento</a>
+            <a href="#" id="btn-logout">🚪 Cerrar Sesión</a>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <header>
+            <h1>Matriz de Acreditación de Personal</h1>
+            <header>
+    <a href="index.html" style="color: #38bdf8; text-decoration: none; font-size: 0.9rem; display: inline-block; margin-bottom: 10px;">← Cerrar Sesión / Volver al Login</a>
+    <h1>Matriz de Acreditación de Personal</h1>
+    <p>Semáforo de cumplimiento en tiempo real.</p>
+</header>
+            <p>Semáforo de cumplimiento en tiempo real.</p>
+        </header>
+
+        <div class="table-container">
+            <table class="matriz-table">
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Curso</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-matriz">
+                    <!-- Aquí JavaScript inyectará los datos -->
+                    <tr><td colspan="4" style="text-align:center;">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Script directo en el HTML para evitar el error 404 -->
+    <script>
+        // 1. Verificar que el usuario es Admin
+        const usuario = JSON.parse(localStorage.getItem('usuarioCodePapu'));
+
+        if (!usuario || usuario.rol !== 'admin') {
+            window.location.href = '/index.html'; // Si no es admin, lo devuelve al login
+        } else {
+            document.getElementById('admin-nombre').textContent = usuario.nombre;
+        }
+
+        // 2. Cerrar Sesión
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('usuarioCodePapu');
+            window.location.href = '/index.html';
+        });
+
+        // 3. Cargar la Matriz desde el Backend
+        async function cargarMatriz() {
+            try {
+                const response = await fetch('/api/admin/matriz');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('tabla-matriz');
+                tbody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay datos de empleados aún.</td></tr>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    let badgeClass = 'pendiente';
+                    if (item.estado === 'Apto') badgeClass = 'apto';
+                    if (item.estado === 'En Curso') badgeClass = 'curso';
+
+                    const tr = document.createElement('tr');
+
+       // Esta es la parte que dibuja la fila de Angela
+
+    // ... dentro del data.forEach(item => { ...
+
+// Creamos las opciones del select dinámicamente
+const opcionesCursos = `
+    <option value="0">Seleccionar...</option>
+    <option value="1" ${item.curso_id === 1 ? 'selected' : ''}>Inducción</option>
+    <option value="2" ${item.curso_id === 2 ? 'selected' : ''}>Prevención Riesgos</option>
+    <option value="3" ${item.curso_id === 3 ? 'selected' : ''}>Uso EPP</option>
+`;
+
+tr.innerHTML = `
+    <td>${item.empleado}</td>
+    <td>${item.curso}</td>
+    <td><span class="badge ${badgeClass}">${item.estado}</span></td>
+    <td style="display: flex; gap: 10px; align-items: center;">
+        <select class="select-curso" style="padding: 8px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 8px; font-size: 0.8rem;">
+            ${opcionesCursos}
+        </select>
+        <button class="btn-asignar" data-email="${item.email}" style="background: #38bdf8; border: none; color: #0f172a; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            Asignar
+        </button>
+    </td>
+`;
+                    tbody.appendChild(tr);
+                });
+
+
+
+
+
+                // Escuchar clics en los botones de "Asignar"
+
+                document.querySelectorAll('.btn-asignar').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const email = e.target.getAttribute('data-email');
+                const selectCurso = e.target.parentElement.querySelector('.select-curso');
+                const curso_id = selectCurso.value;
+
+                try {
+                    const response = await fetch('/api/admin/asignar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email_empleado: email, curso_id: curso_id })
+                    });
+                    const resData = await response.json();
+                    
+                    if (resData.success) {
+                        alert('¡Curso asignado con éxito!');
+                        cargarMatriz(); 
+                    } else {
+                        alert('Error: ' + resData.error);
+                    }
+                } catch (error) {
+                    console.error('Error al asignar:', error);
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error('Error al cargar la matriz:', error);
+    }
+}
+
+        // Ejecutar al cargar la página
+        cargarMatriz();
+    </script>
+</body>
+</html>
