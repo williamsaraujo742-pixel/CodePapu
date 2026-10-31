@@ -13,7 +13,6 @@ app.use(cors());
 
 
 
-
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 app.get('/', (req, res) => {
