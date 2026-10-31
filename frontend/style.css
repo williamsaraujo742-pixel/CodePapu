@@ -1,0 +1,365 @@
+/* --- RESET Y BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #0f172a; /* Fondo oscuro */
+    color: #e2e8f0;
+}
+
+/* --- ESTILOS DE LA PANTALLA DE LOGIN --- */
+.auth-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.auth-box {
+    background: rgba(30, 41, 59, 0.7);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+}
+.logo span { color: #38bdf8; }
+
+.subtitle {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #38bdf8;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #38bdf8;
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(56, 189, 248, 0.3);
+}
+
+.error-msg {
+    color: #ef4444; /* Rojo */
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    min-height: 20px;
+}
+
+
+
+
+
+/* --- ESTILOS DEL DASHBOARD (Matriz) --- */
+.dashboard-body {
+    display: flex;
+    height: 100vh;
+    background: #0f172a;
+}
+
+.sidebar {
+    width: 260px;
+    background: #1e293b;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-info {
+    margin: 30px 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-info p {
+    font-size: 0.7rem;
+    color: #38bdf8;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.admin-info h3 {
+    font-size: 1.1rem;
+    margin-top: 5px;
+}
+
+.side-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.side-menu a {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: background 0.3s, color 0.3s;
+    font-weight: 600;
+}
+
+.side-menu a:hover, .side-menu a.active {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.main-content header {
+    margin-bottom: 30px;
+}
+
+.main-content h1 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.main-content p {
+    color: #94a3b8;
+}
+
+/* Tabla */
+.table-container {
+    background: #1e293b;
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.matriz-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.matriz-table th {
+    text-align: left;
+    padding: 15px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.matriz-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+}
+
+/* Semáforos */
+.badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.badge.apto { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+.badge.pendiente { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+.badge.curso { background: rgba(234, 179, 8, 0.2); color: #facc15; }
+
+
+
+
+/* --- VISTA DEL EMPLEADO --- */
+.status-card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.course-container {
+    display: flex;
+    gap: 30px;
+}
+
+.video-section, .test-section {
+    flex: 1;
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.video-placeholder {
+    background: #0f172a;
+    height: 250px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #64748b;
+    margin-top: 15px;
+    border: 1px dashed #334155;
+}
+
+.test-section h3 {
+    margin-bottom: 15px;
+}
+
+.test-section select {
+    width: 100%;
+    padding: 10px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: white;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+
+/* Estilos para el formulario */
+.pregunta-group {
+    margin-bottom: 15px;
+}
+
+.pregunta-group label {
+    display: block;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 5px;
+}
+
+.pregunta-group select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s;
+}
+
+.pregunta-group select:focus {
+    outline: none;
+    border-color: #38bdf8;
+}
+
+.video-container {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Esto mantiene la proporción del video */
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Grid para las tarjetas de cursos */
+.grid-cursos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.curso-card {
+    background: #1e293b;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s; 
+
+    display: flex;             
+    flex-direction: column;    
+    height: 100%;   
+}
+
+/* El contenedor interno también debe ser flex para empujar el botón */
+.curso-card .curso-info {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between; /* Esto empuja el botón hacia abajo */
+}
+
+.curso-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border-color: #38bdf8;
+}
+
+.curso-card h3 {
+    color: #f8fafc;
+    margin-bottom: 10px;
+}
+
+.curso-card p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
